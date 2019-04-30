@@ -30,6 +30,10 @@ const argv = require('yargs')
         describe: 'Adds the tippecanoe minzoom property. Value in the form min-max where min is the smallest minzoom and max the largest minzoom, For example --include-minzoom=0-16.',
         default: false
     })
+    .option('minzoom-offset', {
+        describe: 'Offset from the default minzoom calculations, For example --minzoom-offset=1.',
+        default: 0
+    })
     .option('label', {
         alias: 'l',
         choices: ['polylabel', 'centroid', 'center-of-mass'],
@@ -63,6 +67,7 @@ const precision = argv.precision || 0.001;
 const includeArea = argv['include-area'];
 const style = argv['style'];
 const includeMinzoom = argv['include-minzoom'];
+const minzoomOffset = argv['minzoom-offset'];
 
 if (verbose) console.error('Reading and parsing JSON...');
 
@@ -173,7 +178,7 @@ function labelFeature(inputFeature) {
 
                     if (includeMinzoom) {
                         tippecanoeProperties = {
-                            minzoom: areaToZoom(area, minZoomMin, minZoomMax)
+                            minzoom: areaToZoom(area, minZoomMin, minZoomMax, minzoomOffset);
                         };
                     }
                 }
@@ -203,6 +208,7 @@ function labelFeature(inputFeature) {
     return labeledFeatures;
 }
 
-function areaToZoom(area, min, max) {
-    return Math.max(min, Math.min(max, Math.round(13.9670060423554 - (0.428698399307115 * Math.log(area, 2)))));
+function areaToZoom(area, min, max, offset) {
+    let calculatedZoom = Math.round(13.9670060423554 - (0.428698399307115 * Math.log(area, 2)));
+    return Math.max(min, Math.min(max, calculatedZoom + offset));
 }
