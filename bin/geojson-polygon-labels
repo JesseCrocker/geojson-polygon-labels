@@ -178,7 +178,7 @@ function labelFeature(inputFeature) {
 
                     if (includeMinzoom) {
                         tippecanoeProperties = {
-                            minzoom: areaToZoom(area, minZoomMin, minZoomMax, minzoomOffset);
+                            minzoom: areaToZoom(area, minZoomMin, minZoomMax, minzoomOffset)
                         };
                     }
                 }
